@@ -46,6 +46,12 @@ public class MuscianController {
         return new ResponseEntity<List<Musician>>().success(all);
     }
 
+    @GetMapping("/list/instruments")
+    public ResponseEntity<List<Instruments>> listInstruments(){
+        List<Instruments> all = instrumentsRepository.findAll();
+        return new ResponseEntity<List<Instruments>>().success(all);
+    }
+
     @PostMapping("/add/musician")
     @Transactional
     public ResponseEntity<Musician> addMusician(@RequestBody MusicianDTO musicianDTO) {
@@ -66,5 +72,7 @@ public class MuscianController {
         }
         return new ResponseEntity<Musician>().success(null);
     }
+
+
 
 }
