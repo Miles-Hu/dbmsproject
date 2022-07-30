@@ -35,6 +35,7 @@ public class EventsController {
             eventsDTO.setPlace(e.getPlace());
             eventsDTO.setConcertTitle(e.getConcertTitle());
             eventsDTO.setTitle(e.getTitle());
+            eventsDTO.setEventId(e.getEventId());
             return eventsDTO;
         }).collect(Collectors.toList());
         return new ResponseEntity<List<EventsDTO>>().success(collect);
@@ -47,18 +48,22 @@ public class EventsController {
         events.setDatetime(new Date(eventsDTO.getDatetime()));
         events.setPlace(eventsDTO.getPlace());
         events.setTitle(eventsDTO.getTitle());
+        events.setEventId(eventsDTO.getEventId());
         eventRepository.save(events);
         return new ResponseEntity<EventsDTO>().success(null);
     }
 
     @PutMapping("/update/event")
     public ResponseEntity<EventsDTO> updateEvent(@RequestBody EventsDTO eventsDTO) {
+        if (eventsDTO.getEventId() == null) {
+            return new ResponseEntity<EventsDTO>().fail("please specify which Event to update.");
+        }
        return addEvent(eventsDTO);
     }
 
     @DeleteMapping("/delete/event")
-    public ResponseEntity<EventsDTO> deleteEvent(@RequestParam String title) {
-        eventRepository.deleteById(title);
+    public ResponseEntity<EventsDTO> deleteEvent(@RequestParam Integer eventId) {
+        eventRepository.deleteById(eventId);
         return new ResponseEntity<EventsDTO>().success(null);
     }
 }
