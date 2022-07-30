@@ -1,5 +1,6 @@
 package com.example.demo.view;
 
+import io.netty.util.internal.StringUtil;
 import lombok.Data;
 
 /**
@@ -24,9 +25,12 @@ public class ResponseEntity<E> {
         return this;
     }
 
-    public ResponseEntity<E> fail() {
+    public ResponseEntity<E> fail(String message) {
         code = 0;
-        message = "fail";
+        this.message = message;
+        if (StringUtil.isNullOrEmpty(message)) {
+            message = "fail";
+        }
         return this;
     }
 }

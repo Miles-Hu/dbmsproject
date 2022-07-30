@@ -13,6 +13,8 @@ import java.util.Date;
 @Data
 public class EventsDTO {
 
+    private Integer eventId;
+
     private String title;
 
     private long datetime;
