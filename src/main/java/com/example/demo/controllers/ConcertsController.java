@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Miles
@@ -26,15 +28,35 @@ import java.util.Optional;
 public class ConcertsController {
 
     @Autowired
+    private MusicWorkRepository musicWorkRepository;
+
+    @Autowired
     private FeaturedRepository featuredRepository;
 
     @Autowired
     private ConcertsRepository concertsRepository;
 
     @GetMapping("/list/concerts")
-    public ResponseEntity<List<Concerts>> listConcerts(){
+    public ResponseEntity<List<ConcertsDTO>> listConcerts(){
         List<Concerts> all = concertsRepository.findAll();
-        return new ResponseEntity<List<Concerts>>().success(all);
+        List<MusicWork> musicWorks = musicWorkRepository.findAll();
+        List<Featured> featureds = featuredRepository.findAll();
+        List<ConcertsDTO> concertsDTOS = new ArrayList<>();
+        for (Concerts concerts : all) {
+            List<String> musicTitles = featureds.stream().filter(e -> e.getConcertTitle().equals(concerts.getTitle())).map(e -> e.getMusicTitle()).collect(Collectors.toList());
+            List<MusicWork> collect = musicWorks.stream().filter(e -> musicTitles.contains(e.getTitle())).collect(Collectors.toList());
+            ConcertsDTO concertsDTO = new ConcertsDTO();
+            concertsDTO.setTitle(concerts.getTitle());
+            concertsDTO.setConcertType(concerts.getConcertType());
+            concertsDTO.setMusicWorks(collect.stream().map(e -> {
+                MusicWorkDTO musicWorkDTO = new MusicWorkDTO();
+                musicWorkDTO.setTitle(e.getTitle());
+                musicWorkDTO.setMusicType(e.getMusicType());
+                return musicWorkDTO;
+            }).collect(Collectors.toList()));
+            concertsDTOS.add(concertsDTO);
+        }
+        return new ResponseEntity<List<ConcertsDTO>>().success(concertsDTOS);
     }
 
     @PostMapping("/add/concerts")
