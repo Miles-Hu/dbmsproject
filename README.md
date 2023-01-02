@@ -1,4 +1,4 @@
-# DBMS Final Project (https://github.com/SuryaNuchu/dbmsproject)
+# Event management system
 
 ### Front End (React JS)
 To run the front end project, install the following softwares
